@@ -1,7 +1,10 @@
 {
-    "day": 11,
-    "info": "EPAM Consulting Group.",
-    "month": 5,
-    "price": 140,
-    "year": 2021
+    "EventDetails": {
+        "day": 22,
+        "info": "Some basic info.",
+        "month": 9,
+        "price": 169,
+        "year": 2021
+    },
+    "EventTitle": "EPAM."
 }

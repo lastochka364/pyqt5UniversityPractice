@@ -98,7 +98,7 @@ class Tickets:
 
 
 class Event(Tickets):
-    def __init__(self, day=None, month=None, year=None, tick_price=None, info=None):
+    def __init__(self, name=None, day=None, month=None, year=None, tick_price=None, info=None):
         super().__init__()
         if not isinstance(day, int):
             raise TypeError("Day must be a number.")
@@ -109,13 +109,15 @@ class Event(Tickets):
         if not isinstance(info, str):
             raise TypeError("Info must be a string.")
 
+        self.event_name = name
         self.event_date = datetime.date(year, month, day)
         self.event_info = info
         self.tick_price = tick_price
         self.set_tick_price(self.tick_price)
 
     def __str__(self):
-        return f"Date of the Event: {self.event_date}\n" \
+        return f"Title: {self.event_name}\n" \
+               f"Date of the Event: {self.event_date}\n" \
                f"Event info: {self.event_info}\n" \
                f"Regular Ticket Price: {self.tick_price}$"
 

@@ -66,9 +66,9 @@ class MainUI(QtWidgets.QMainWindow, Tickets.Tickets):
 
         self.mUi.show()
 
-    def addEvent(self, day=None, month=None, year=None, price=None, info=None):
+    def addEvent(self, name=None, day=None, month=None, year=None, price=None, info=None):
         try:
-            self.EventInit = self.Event(day, month, year, price, info)
+            self.EventInit = self.Event(name, day, month, year, price, info)
         except Exception:
             pass
         self.mUi.eventsInfo.setText(self.EventInit.__str__())
@@ -85,6 +85,7 @@ class MainUI(QtWidgets.QMainWindow, Tickets.Tickets):
             f"Cost of late ticket: {self.EventInit.get_tick_price('Late')}$")
 
     def saveEvent(self):
+        self.name = self.eUi.LeName.text()
         self.day = self.eUi.dateEvent.date().day()
         self.month = self.eUi.dateEvent.date().month()
         self.year = self.eUi.dateEvent.date().year()
@@ -92,7 +93,7 @@ class MainUI(QtWidgets.QMainWindow, Tickets.Tickets):
         self.price = self.eUi.SbPrice.value()
         self.info = self.eUi.TeInfo.toPlainText()
 
-        self.addEvent(self.day, self.month, self.year, self.price, self.info)
+        self.addEvent(self.name, self.day, self.month, self.year, self.price, self.info)
         self.eUi.close()
 
     def cancelEvent(self):
@@ -174,8 +175,12 @@ class MainUI(QtWidgets.QMainWindow, Tickets.Tickets):
     def saveJsonEvent(self):
         try:
             event = {
+                'EventTitle':self.name,
+                    'EventDetails':
+                {
                 "day":self.day, "month":self.month, "year":self.year, "price":self.price, "info":self.info
                 }
+        }
         except Exception:
             pass
         else:
@@ -192,21 +197,27 @@ class MainUI(QtWidgets.QMainWindow, Tickets.Tickets):
             with f:
                 data = json.load(f)
         
-        self.day, self.month, self.year = data['day'], data['month'], data['year']
-        self.price, self.info = data['price'], data['info']
-        self.EventInit = self.Event(self.day, self.month, self.year, self.price, self.info)
-        
-        self.mUi.eventsInfo.setText(self.EventInit.__str__())
-        
-        self.bUi.costRegular.setText(
-            f"Cost of regular ticket: {self.EventInit.get_tick_price('Regular')}$")
-        self.bUi.costEarly.setText(
-            f"Cost of early ticket: {self.EventInit.get_tick_price('Early')}$")
-        self.bUi.costStudent.setText(
-            f"Cost of student ticket: {self.EventInit.get_tick_price('Student')}$")
-        self.bUi.costLate.setText(
-            f"Cost of late ticket: {self.EventInit.get_tick_price('Late')}$")
+        try:
+            self.day, self.month = data['EventDetails']['day'], data['EventDetails']['month']
+            self.year = data['EventDetails']['year']
+            self.price, self.info = data['EventDetails']['price'], data['EventDetails']['info']
 
+            self.name = data['EventTitle']
+
+            self.EventInit = self.Event(self.name, self.day, self.month, self.year, self.price, self.info)
+                
+            self.mUi.eventsInfo.setText(self.EventInit.__str__())
+            
+            self.bUi.costRegular.setText(
+                f"Cost of regular ticket: {self.EventInit.get_tick_price('Regular')}$")
+            self.bUi.costEarly.setText(
+                f"Cost of early ticket: {self.EventInit.get_tick_price('Early')}$")
+            self.bUi.costStudent.setText(
+                f"Cost of student ticket: {self.EventInit.get_tick_price('Student')}$")
+            self.bUi.costLate.setText(
+                f"Cost of late ticket: {self.EventInit.get_tick_price('Late')}$")
+        except Exception:
+            pass
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
